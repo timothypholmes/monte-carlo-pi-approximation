@@ -10,7 +10,7 @@ from random import random, randint
 
 class monte_carlo_pi:
 
-    def __init__(self, n_points, x_inside, y_inside, x_outside, y_outside, points_inside):
+    def __init__(self, n_points, x_inside, y_inside, x_outside, y_outside, points_inside, points_outside):
 
         #self.x = x
         #self.y = y
@@ -22,6 +22,7 @@ class monte_carlo_pi:
         self.x_outside = x_outside
         self.y_outside = y_outside
         self.points_inside = points_inside
+        self.points_outside = points_outside 
 
     def monte_carlo(self, n_points):
         
@@ -50,8 +51,8 @@ class monte_carlo_pi:
                 self.x_outside[i] = x
                 self.y_outside[i] = y
 
-        pi = 4*points_inside/self.n_points
-        return pi
+        self.pi = 4*points_inside/self.n_points
+        return self.pi
 
 
     def monte_plot(self, x_inside, y_inside, x_outside, y_outside):
@@ -78,22 +79,22 @@ class monte_carlo_pi:
         ax1.xaxis.set_tick_params(labelsize=10)
         ax1.yaxis.set_tick_params(labelsize=10)
 
-        #ax1.set_title("Pi approximation= %f" % pi)
+        ax1.set_title("Pi approximation= %f" % self.pi)
         ax1.plot(self.x_inside,self.y_inside,'b.')
         ax1.plot(self.x_outside,self.y_outside,'r.')
 
-        ax2 = self.fig.add_subplot(122, xlim = xlim, ylim = ylim)
+        self.ax2 = self.fig.add_subplot(122, xlim = xlim, ylim = ylim)
 
-        self.inside, = ax2.plot([], [], c='r')
-        self.outside, = ax2.plot([], [], c='b')
-        ax2.add_artist(circle)
+        self.inside, = self.ax2.plot([], [], c='r')
+        self.outside, = self.ax2.plot([], [], c='b')
+        self.ax2.add_artist(circle)
 
-        self.title = ax2.set_title('', fontsize=12)
-        ax2.legend(prop=dict(size=15), loc='lower left', shadow=True, ncol=2)
-        ax2.set_xlabel('$x$', fontsize=10)
-        ax2.set_ylabel('$y$', fontsize=10)
-        ax2.xaxis.set_tick_params(labelsize=10)
-        ax2.yaxis.set_tick_params(labelsize=10)
+        self.title = self.ax2.set_title('', fontsize=12)
+        self.ax2.legend(prop=dict(size=15), loc='lower left', shadow=True, ncol=2)
+        self.ax2.set_xlabel('$x$', fontsize=10)
+        self.ax2.set_ylabel('$y$', fontsize=10)
+        self.ax2.xaxis.set_tick_params(labelsize=10)
+        self.ax2.yaxis.set_tick_params(labelsize=10)
 
 
     def init(self):
@@ -104,7 +105,7 @@ class monte_carlo_pi:
         return self.inside, self.outside,
 
     def update_pi(self, i):
-        n_points = 10000
+        n_points = 100
         self.points_inside = 0
         self.points_outside = 0
 
@@ -112,30 +113,45 @@ class monte_carlo_pi:
         y = 2*random() - 1
         r = (x**2 + y**2)
         #plt.title("Pi approximation= %f" % (4*points_inside /float(n_points)))
+        count = 0
         for i in range(1, n_points):
             if r <= 1:
                 self.points_inside += 1
+                count += 1
                 plt.plot(x,y,'r.-')
                 #x_inside = x
                 #y_inside = y
-                #title.set_text("Pi approximation= %f" % (4*points_inside /n_points))
+                self.pi = ((4 * self.points_inside) / (i))
                 return self.points_inside
-
+                return self.pi
 
             else:
                 self.points_outside += 1
+                count += 1
                 plt.plot(x,y,'b.-')
                 #x_outside = x
                 #y_outside = y
-                return self.points_inside
+                self.pi = ((4 * self.points_inside) / (i))
+                return self.points_outside
+                return self.pi
 
-    def animate(self, points_inside):
 
-        #self.title.set_text("Pi approximation= %f" % (4 * self.points_inside / (self.points_inside + self.points_outside)))
+            self.ax2.set_title("Pi approximation = {}".format(self.pi))
 
-        self.animation = plt.matplotlib.animation.FuncAnimation(self.fig, self.update_pi, init_func=self.init, frames=n_points, interval=1, repeat=False)
+            #pi = ((4 * self.points_inside) / (self.points_inside + self.points_outside))
+            #self.ax2.set_title("Pi approximation = {}".format(pi))
+        
+
+    def animate(self, points_inside, points_outside):
+
+        #self.ax2.set_title("Pi approximation= %f" % (4 * (self.points_inside + 1) / ((self.points_inside + self.points_outside) + 1)))
+        #pi = ((4 * self.points_inside + 1) / (self.points_inside + self.points_outside + 1))
+        #self.ax2.set_title("Pi approximation = {}".format(pi))
+        
+
+        self.animate_update = plt.matplotlib.animation.FuncAnimation(self.fig, self.update_pi, init_func=self.init, frames=n_points, interval=1, repeat=False)
         #animate.save('animation.gif',writer='imagemagick', fps=60, dpi=80)
-        #animate.save('pi.mp4', fps=120,extra_args=['-vcodec', 'libx264'])
+        self.animate_update.save('pi.mp4', fps=120,extra_args=['-vcodec', 'libx264'])
         plt.show()
         print('Done')
 
@@ -143,15 +159,16 @@ class monte_carlo_pi:
  #   init()
  #   animate(i)
 
-n_points = 5000
+n_points = 1000
 x_inside = 0
 y_inside = 0
 x_outside = 0
 y_outside = 0
 points_inside = 0
-m = monte_carlo_pi(n_points, x_inside, y_inside, x_outside, y_outside, points_inside)
+points_outside = 0
+m = monte_carlo_pi(n_points, x_inside, y_inside, x_outside, y_outside, points_inside, points_outside)
 
 m.monte_carlo(n_points)
 m.monte_plot(x_inside, y_inside, x_outside, y_outside)
 m.init()
-m.animate(points_inside)
+m.animate(points_inside, points_outside)
