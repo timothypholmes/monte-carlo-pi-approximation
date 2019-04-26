@@ -4,14 +4,11 @@ Gives an animated approximation of pi with pseudo-random numbers
 
 
 ### Animation of Psuedo Random Numbers
-### Animation of Psuedo Random Numbers
-![pi](https://github.com/timothypholmes/monte-carlo-pi-approximation/blob/master/pi.gif)
+
 ![pi](https://github.com/timothypholmes/monte-carlo-pi-approximation/blob/master/pi.gif)
 
 
 ### The Theory
-### The Theory
-
 
 The area of a circle is given by 
 
